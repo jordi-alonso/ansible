@@ -1,0 +1,21 @@
+# INVENTARI D'ANSIBLE
+
+# Grup de servidors
+[servidors]
+server_web_ftp ansible_host=10.5.1.10 ansible_user=jordi
+server2 ansible_host=10.5.1.11 ansible_user=jordi
+server3 ansible_host=10.5.1.12 ansible_user=jordi
+
+# Grup de clients
+[clients]
+client1 ansible_host=10.5.2.10 ansible_user=jordi
+client2 ansible_host=10.5.2.11 ansible_user=jordi
+client3 ansible_host=10.5.2.12 ansible_user=jordi
+
+# Grup de Firewall
+[fw]
+firewall ansible_host=10.5.2.254 ansible_user=jordi
+
+# Grup de Base
+[base]
+pc_admin ansible_host=10.5.0.1 ansible_user=user1

@@ -1,0 +1,8 @@
+---
+app_user: "jordi"
+http_host: "server_web_ftp"
+http_conf: "server_web_ftp.conf"
+http_port: "80"
+https_port: "443"
+disable_default: true
+ansible_sudo_pass: jordi
