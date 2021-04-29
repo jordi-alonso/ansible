@@ -1,0 +1,13 @@
+---
+- hosts: all  
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+    - name: Actualització dels paquets
+      apt: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+      loop: [ 'aptitude' ]
+
+    - name: Instal·lar Filezilla
+      apt: name=filezilla update_cache=yes state=latest
