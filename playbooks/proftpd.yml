@@ -1,0 +1,40 @@
+---
+- hosts: clients
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+    - name: Actualització dels paquets
+      apt: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+      loop: [ 'aptitude' ]
+
+    - name: Instal·lar ProFTPd
+      apt: name=proftpd update_cache=yes state=latest
+
+    - name: Copiar l'arxiu de configuració
+      template:
+        src: "files/proftpd.conf"
+        dest: "/etc/proftpd"
+      notify: Restart ProFTPd
+
+    - name: Copiar certificat
+      template:
+        src: "files/cert.crt"
+        dest: "/etc/ssl/certs/cert.crt"
+
+    - name: Copiar clau
+      template:
+        src: "files/cert.key"
+        dest: "/etc/ssl/private/cert.key"
+
+  handlers:
+    - name: Reload ProFTPd
+      service:
+        name: proftpd
+        state: reloaded
+
+    - name: Restart ProFTPd
+      service:
+        name: proftpd
+        state: restarted
