@@ -15,7 +15,7 @@
     - name: Copiar l'arxiu de configuració
       template:
         src: "files/proftpd.conf"
-        dest: "/etc/proftpd"
+        dest: "/etc/proftpd/proftpd.conf"
       notify: Restart ProFTPd
 
     - name: Copiar certificat
