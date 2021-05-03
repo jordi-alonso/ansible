@@ -12,6 +12,9 @@
     - name: Instal·lar ProFTPd
       apt: name=proftpd update_cache=yes state=latest
 
+    - name: Instal·lar OpenSSL
+      apt: name=openssl update_cache=yes state=latest
+
     - name: Copiar l'arxiu de configuració
       template:
         src: "files/proftpd.conf"
@@ -27,6 +30,12 @@
       template:
         src: "files/cert.key"
         dest: "/etc/ssl/private/cert.key"
+
+    - name: Copiar arxiu tls
+      template:
+        src: "files/tls.conf"
+        dest: "/etc/proftpd/tls.conf"
+      notify: Restart ProFTPd
 
   handlers:
     - name: Reload ProFTPd
