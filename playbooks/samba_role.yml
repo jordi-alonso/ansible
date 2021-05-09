@@ -1,0 +1,9 @@
+---
+- hosts: samba
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  roles:
+    - geerlingguy.firewall
+    - geerlingguy.samba

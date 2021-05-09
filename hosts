@@ -19,3 +19,7 @@ firewall ansible_host=10.5.2.254 ansible_user=jordi
 # Grup de Base
 [base]
 pc_admin ansible_host=10.5.0.1 ansible_user=user1
+
+# Samba
+[samba]
+samba_server ansible_host=192.168.33.10 ansible_user=jordi

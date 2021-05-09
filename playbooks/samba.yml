@@ -1,0 +1,85 @@
+---
+- hosts: samba
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+    - name: Actualització dels paquets
+      apt: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+      loop: [ 'aptitude' ]
+      
+    - name: Copiar el fitxer hosts
+      copy:
+        src: files/hosts
+        dest: /etc/hosts
+    
+    - name: Copiar resolv.conf
+      copy:
+        src: files/resolv.conf
+        dest: /etc/resolv.conf 
+            
+    - name: Instal·lar Samba
+      apt: name=samba update_cache=yes state=latest
+      
+    - name: Aturar el servei Samba
+      command: systemctl stop samba
+      
+    - name: Crear còpia de seguretat del fitxer smb.conf
+      copy: 
+        src: files/smb.conf
+        dest: /etc/samba/smb.conf.copia
+        
+    - name: Borrar smb.conf original
+      file:
+        path: /etc/samba/smb.conf
+        state: absent
+        
+    - name: Instal·lar smbclient
+      apt: name=smbclient update_cache=yes state=latest
+      ignore_errors: True
+
+    - name: Instal·lar Winbind
+      apt: name=winbind update_cache=yes state=latest
+      ignore_errors: True
+
+    - name: Instal·lar Kerberos
+      apt: name=krb5-config update_cache=yes state=latest
+      ignore_errors: True
+      
+    - name: Instal·lar NTP
+      apt: name=ntp update_cache=yes state=latest
+      ignore_errors: True
+      
+    - name: Copiar arxiu ntp.conf
+      copy: 
+        src: files/ntp.conf
+        dest: /etc/ntp.conf
+      ignore_errors: True
+      
+    - name: Reiniciar el servei NTP
+      command: systemctl restart ntp
+       
+    - name: Instal·la Samba AD-DC
+      command: samba-tool domain provision --server-role=dc --use-rfc2307 --dns-backend=SAMBA_INTERNAL --realm=ANSIBLE.LOCAL --domain=ANSIBLE --adminpass=p4ssword!
+       
+    - name: Copiar fitxer de configuració de Kerberos
+      command: cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
+       
+    - name: Parar serveis necessaris
+      command: systemctl stop smbd nmbd winbind
+       
+    - name: Deshabilitar serveis necessaris
+      command: systemctl disable smbd nmbd winbind
+       
+    - name: Unmask Samba-AD-DC
+      command: systemctl unmask samba-ad-dc
+       
+    - name: Iniciar Samba-AD-DC
+      command: systemctl start samba-ad-dc
+       
+    - name: Habilitar Samba-AD-DC
+      command: systemctl enable samba-ad-dc
+
+    - name: Reiniciar Samba-AD-DC
+      command: systemctl restart samba-ad-dc
